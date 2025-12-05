@@ -6,6 +6,7 @@ import { publicProcedure, router } from "../trpc";
 import { db } from "@/lib/db";
 import { users, sessions } from "@/lib/db/schema";
 import { eq } from "drizzle-orm";
+import { encryptSSN, getSSNLastFour } from "@/lib/crypto";
 
 export const authRouter = router({
   signup: publicProcedure
@@ -36,9 +37,23 @@ export const authRouter = router({
 
       const hashedPassword = await bcrypt.hash(input.password, 10);
 
+      // Encrypt SSN before storing - never store plaintext SSN
+      const ssnEncrypted = encryptSSN(input.ssn);
+      const ssnLastFour = getSSNLastFour(input.ssn);
+
       await db.insert(users).values({
-        ...input,
+        email: input.email,
         password: hashedPassword,
+        firstName: input.firstName,
+        lastName: input.lastName,
+        phoneNumber: input.phoneNumber,
+        dateOfBirth: input.dateOfBirth,
+        ssnEncrypted,
+        ssnLastFour,
+        address: input.address,
+        city: input.city,
+        state: input.state,
+        zipCode: input.zipCode,
       });
 
       // Fetch the created user
@@ -72,7 +87,22 @@ export const authRouter = router({
         (ctx.res as Headers).set("Set-Cookie", `session=${token}; Path=/; HttpOnly; SameSite=Strict; Max-Age=604800`);
       }
 
-      return { user: { ...user, password: undefined }, token };
+      // Return only safe user fields
+      const safeUser = {
+        id: user.id,
+        email: user.email,
+        firstName: user.firstName,
+        lastName: user.lastName,
+        phoneNumber: user.phoneNumber,
+        dateOfBirth: user.dateOfBirth,
+        ssnLastFour: user.ssnLastFour,
+        address: user.address,
+        city: user.city,
+        state: user.state,
+        zipCode: user.zipCode,
+        createdAt: user.createdAt,
+      };
+      return { user: safeUser, token };
     }),
 
   login: publicProcedure
@@ -120,7 +150,22 @@ export const authRouter = router({
         (ctx.res as Headers).set("Set-Cookie", `session=${token}; Path=/; HttpOnly; SameSite=Strict; Max-Age=604800`);
       }
 
-      return { user: { ...user, password: undefined }, token };
+      // Return only safe user fields
+      const safeUser = {
+        id: user.id,
+        email: user.email,
+        firstName: user.firstName,
+        lastName: user.lastName,
+        phoneNumber: user.phoneNumber,
+        dateOfBirth: user.dateOfBirth,
+        ssnLastFour: user.ssnLastFour,
+        address: user.address,
+        city: user.city,
+        state: user.state,
+        zipCode: user.zipCode,
+        createdAt: user.createdAt,
+      };
+      return { user: safeUser, token };
     }),
 
   logout: publicProcedure.mutation(async ({ ctx }) => {
