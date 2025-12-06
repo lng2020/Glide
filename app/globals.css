@@ -24,3 +24,13 @@ body {
   color: var(--foreground);
   font-family: Arial, Helvetica, sans-serif;
 }
+
+/* Fix dark mode input visibility - ensure dark text on light input backgrounds */
+@media (prefers-color-scheme: dark) {
+  input,
+  textarea,
+  select {
+    color: #171717;
+    background-color: #ffffff;
+  }
+}
