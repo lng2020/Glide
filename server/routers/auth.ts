@@ -51,7 +51,6 @@ export const authRouter = router({
 
       const hashedPassword = await bcrypt.hash(input.password, 10);
 
-      // Encrypt SSN before storing - never store plaintext SSN
       const ssnEncrypted = encryptSSN(input.ssn);
       const ssnLastFour = getSSNLastFour(input.ssn);
 
@@ -70,7 +69,6 @@ export const authRouter = router({
         zipCode: input.zipCode,
       });
 
-      // Fetch the created user
       const user = await db.select().from(users).where(eq(users.email, input.email)).get();
 
       if (!user) {
@@ -80,7 +78,8 @@ export const authRouter = router({
         });
       }
 
-      // Create session
+      await db.delete(sessions).where(eq(sessions.userId, user.id));
+
       const token = jwt.sign({ userId: user.id }, process.env.JWT_SECRET || "temporary-secret-for-interview", {
         expiresIn: "7d",
       });
@@ -94,14 +93,12 @@ export const authRouter = router({
         expiresAt: expiresAt.toISOString(),
       });
 
-      // Set cookie
       if ("setHeader" in ctx.res) {
         ctx.res.setHeader("Set-Cookie", `session=${token}; Path=/; HttpOnly; SameSite=Strict; Max-Age=604800`);
       } else {
         (ctx.res as Headers).set("Set-Cookie", `session=${token}; Path=/; HttpOnly; SameSite=Strict; Max-Age=604800`);
       }
 
-      // Return only safe user fields
       const safeUser = {
         id: user.id,
         email: user.email,
@@ -144,6 +141,8 @@ export const authRouter = router({
           message: "Invalid credentials",
         });
       }
+
+      await db.delete(sessions).where(eq(sessions.userId, user.id));
 
       const token = jwt.sign({ userId: user.id }, process.env.JWT_SECRET || "temporary-secret-for-interview", {
         expiresIn: "7d",
