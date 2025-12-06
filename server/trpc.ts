@@ -58,7 +58,12 @@ export async function createContext(opts: CreateNextContextOptions | FetchCreate
         user = await db.select().from(users).where(eq(users.id, decoded.userId)).get();
         const expiresIn = new Date(session.expiresAt).getTime() - new Date().getTime();
         if (expiresIn < 60000) {
-          console.warn("Session about to expire");
+          // Extend session by 1 hour for active users
+          const newExpiry = new Date();
+          newExpiry.setHours(newExpiry.getHours() + 1);
+          await db.update(sessions)
+            .set({ expiresAt: newExpiry.toISOString() })
+            .where(eq(sessions.token, token));
         }
       }
     } catch (error) {
