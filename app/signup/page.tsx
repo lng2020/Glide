@@ -83,14 +83,27 @@ export default function SignupPage() {
                   {...register("email", {
                     required: "Email is required",
                     pattern: {
-                      value: /^\S+@\S+$/i,
+                      value: /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/,
                       message: "Invalid email address",
+                    },
+                    validate: {
+                      noTypos: (value) => {
+                        const typos = [".con", ".cm", ".cpm", ".og", ".ent", ".nett"];
+                        const lower = value.toLowerCase();
+                        for (const typo of typos) {
+                          if (lower.endsWith(typo)) {
+                            return `Did you mean ${typo.replace(".con", ".com").replace(".cm", ".com").replace(".cpm", ".com").replace(".og", ".org").replace(".ent", ".net").replace(".nett", ".net")}?`;
+                          }
+                        }
+                        return true;
+                      },
                     },
                   })}
                   type="email"
                   className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm p-2 border"
                 />
                 {errors.email && <p className="mt-1 text-sm text-red-600">{errors.email.message}</p>}
+                <p className="mt-1 text-xs text-gray-500">Email will be converted to lowercase</p>
               </div>
 
               <div>
