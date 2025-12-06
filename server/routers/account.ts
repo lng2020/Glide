@@ -1,4 +1,5 @@
 import { z } from "zod";
+import crypto from "crypto";
 import { TRPCError } from "@trpc/server";
 import { protectedProcedure, router } from "../trpc";
 import { db } from "@/lib/db";
@@ -6,9 +7,9 @@ import { accounts, transactions } from "@/lib/db/schema";
 import { eq, and } from "drizzle-orm";
 
 function generateAccountNumber(): string {
-  return Math.floor(Math.random() * 1000000000)
-    .toString()
-    .padStart(10, "0");
+  const bytes = crypto.randomBytes(5);
+  const num = bytes.readUIntBE(0, 5) % 10000000000;
+  return num.toString().padStart(10, "0");
 }
 
 export const accountRouter = router({
