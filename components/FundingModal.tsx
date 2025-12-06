@@ -17,9 +17,29 @@ type FundingFormData = {
   routingNumber?: string;
 };
 
+// Detect card type from number prefix
+function getCardType(cardNumber: string): string | null {
+  const patterns: { type: string; pattern: RegExp }[] = [
+    { type: "Visa", pattern: /^4/ },
+    { type: "Mastercard", pattern: /^(5[1-5]|2[2-7])/ },
+    { type: "Amex", pattern: /^3[47]/ },
+    { type: "Discover", pattern: /^(6011|65|64[4-9])/ },
+    { type: "Diners", pattern: /^(36|38|30[0-5])/ },
+    { type: "JCB", pattern: /^35/ },
+  ];
+
+  for (const { type, pattern } of patterns) {
+    if (pattern.test(cardNumber)) return type;
+  }
+  return null;
+}
+
 // Luhn algorithm to validate card numbers
 function isValidCardNumber(cardNumber: string): boolean {
   if (!/^\d{13,19}$/.test(cardNumber)) return false;
+
+  // Check if it's a recognized card type
+  if (!getCardType(cardNumber)) return false;
 
   let sum = 0;
   let isEven = false;
@@ -141,7 +161,9 @@ export function FundingModal({ accountId, onClose, onSuccess }: FundingModalProp
                 validate: {
                   validCard: (value) => {
                     if (fundingType !== "card") return true;
-                    if (!isValidCardNumber(value)) return "Invalid card number";
+                    if (!isValidCardNumber(value)) {
+                      return "Invalid card number. We accept Visa, Mastercard, Amex, Discover, Diners, and JCB.";
+                    }
                     return true;
                   },
                 },
