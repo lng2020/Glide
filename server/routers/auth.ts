@@ -22,7 +22,7 @@ export const authRouter = router({
         }, { message: "Password must contain uppercase, lowercase, number, and special character" }),
         firstName: z.string().min(1),
         lastName: z.string().min(1),
-        phoneNumber: z.string().regex(/^\+?\d{10,15}$/),
+        phoneNumber: z.string().regex(/^(\d{10}|\+\d{11,15})$/, "Enter 10 digits (US) or +country code (international)"),
         dateOfBirth: z.string().refine((val) => {
           const dob = new Date(val);
           const today = new Date();

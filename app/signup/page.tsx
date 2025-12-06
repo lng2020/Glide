@@ -189,12 +189,12 @@ export default function SignupPage() {
                   {...register("phoneNumber", {
                     required: "Phone number is required",
                     pattern: {
-                      value: /^\d{10}$/,
-                      message: "Phone number must be 10 digits",
+                      value: /^(\d{10}|\+\d{11,15})$/,
+                      message: "Enter 10 digits (US) or +country code with number (international)",
                     },
                   })}
                   type="tel"
-                  placeholder="1234567890"
+                  placeholder="5551234567 or +15551234567"
                   className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm p-2 border"
                 />
                 {errors.phoneNumber && <p className="mt-1 text-sm text-red-600">{errors.phoneNumber.message}</p>}
