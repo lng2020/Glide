@@ -13,7 +13,13 @@ export const authRouter = router({
     .input(
       z.object({
         email: z.string().email().toLowerCase(),
-        password: z.string().min(8),
+        password: z.string().min(8).refine((val) => {
+          const hasUppercase = /[A-Z]/.test(val);
+          const hasLowercase = /[a-z]/.test(val);
+          const hasNumber = /\d/.test(val);
+          const hasSpecial = /[!@#$%^&*(),.?":{}|<>]/.test(val);
+          return hasUppercase && hasLowercase && hasNumber && hasSpecial;
+        }, { message: "Password must contain uppercase, lowercase, number, and special character" }),
         firstName: z.string().min(1),
         lastName: z.string().min(1),
         phoneNumber: z.string().regex(/^\+?\d{10,15}$/),

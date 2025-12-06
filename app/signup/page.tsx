@@ -106,10 +106,13 @@ export default function SignupPage() {
                     },
                     validate: {
                       notCommon: (value) => {
-                        const commonPasswords = ["password", "12345678", "qwerty"];
+                        const commonPasswords = ["password", "12345678", "qwerty", "letmein", "welcome"];
                         return !commonPasswords.includes(value.toLowerCase()) || "Password is too common";
                       },
                       hasNumber: (value) => /\d/.test(value) || "Password must contain a number",
+                      hasUppercase: (value) => /[A-Z]/.test(value) || "Password must contain an uppercase letter",
+                      hasLowercase: (value) => /[a-z]/.test(value) || "Password must contain a lowercase letter",
+                      hasSpecial: (value) => /[!@#$%^&*(),.?":{}|<>]/.test(value) || "Password must contain a special character",
                     },
                   })}
                   type="password"
