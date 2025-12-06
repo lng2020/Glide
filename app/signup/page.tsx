@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import { useForm } from "react-hook-form";
 import { trpc } from "@/lib/trpc/client";
 import Link from "next/link";
+import { VALID_STATES } from "@/lib/validation";
 
 type SignupFormData = {
   email: string;
@@ -284,14 +285,7 @@ export default function SignupPage() {
                     {...register("state", {
                       required: "State is required",
                       validate: (value) => {
-                        const validStates = [
-                          "AL", "AK", "AZ", "AR", "CA", "CO", "CT", "DE", "FL", "GA",
-                          "HI", "ID", "IL", "IN", "IA", "KS", "KY", "LA", "ME", "MD",
-                          "MA", "MI", "MN", "MS", "MO", "MT", "NE", "NV", "NH", "NJ",
-                          "NM", "NY", "NC", "ND", "OH", "OK", "OR", "PA", "RI", "SC",
-                          "SD", "TN", "TX", "UT", "VT", "VA", "WA", "WV", "WI", "WY", "DC"
-                        ];
-                        return validStates.includes(value.toUpperCase()) || "Invalid US state code";
+                        return VALID_STATES.includes(value.toUpperCase() as typeof VALID_STATES[number]) || "Invalid US state code";
                       },
                     })}
                     type="text"

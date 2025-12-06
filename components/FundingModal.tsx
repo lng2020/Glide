@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { trpc } from "@/lib/trpc/client";
+import { isValidCardNumber } from "@/lib/validation";
 
 interface FundingModalProps {
   accountId: number;
@@ -16,48 +17,6 @@ type FundingFormData = {
   accountNumber: string;
   routingNumber?: string;
 };
-
-// Detect card type from number prefix
-function getCardType(cardNumber: string): string | null {
-  const patterns: { type: string; pattern: RegExp }[] = [
-    { type: "Visa", pattern: /^4/ },
-    { type: "Mastercard", pattern: /^(5[1-5]|2[2-7])/ },
-    { type: "Amex", pattern: /^3[47]/ },
-    { type: "Discover", pattern: /^(6011|65|64[4-9])/ },
-    { type: "Diners", pattern: /^(36|38|30[0-5])/ },
-    { type: "JCB", pattern: /^35/ },
-  ];
-
-  for (const { type, pattern } of patterns) {
-    if (pattern.test(cardNumber)) return type;
-  }
-  return null;
-}
-
-// Luhn algorithm to validate card numbers
-function isValidCardNumber(cardNumber: string): boolean {
-  if (!/^\d{13,19}$/.test(cardNumber)) return false;
-
-  // Check if it's a recognized card type
-  if (!getCardType(cardNumber)) return false;
-
-  let sum = 0;
-  let isEven = false;
-
-  for (let i = cardNumber.length - 1; i >= 0; i--) {
-    let digit = parseInt(cardNumber[i], 10);
-
-    if (isEven) {
-      digit *= 2;
-      if (digit > 9) digit -= 9;
-    }
-
-    sum += digit;
-    isEven = !isEven;
-  }
-
-  return sum % 10 === 0;
-}
 
 export function FundingModal({ accountId, onClose, onSuccess }: FundingModalProps) {
   const [error, setError] = useState("");

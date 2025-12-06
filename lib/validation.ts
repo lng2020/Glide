@@ -3,13 +3,14 @@
  * Pure functions extracted for testability
  */
 
-// Valid US state codes (50 states + DC)
+// Valid US state codes (50 states + DC + territories)
 export const VALID_STATES = [
   "AL", "AK", "AZ", "AR", "CA", "CO", "CT", "DE", "FL", "GA",
   "HI", "ID", "IL", "IN", "IA", "KS", "KY", "LA", "ME", "MD",
   "MA", "MI", "MN", "MS", "MO", "MT", "NE", "NV", "NH", "NJ",
   "NM", "NY", "NC", "ND", "OH", "OK", "OR", "PA", "RI", "SC",
-  "SD", "TN", "TX", "UT", "VT", "VA", "WA", "WV", "WI", "WY", "DC"
+  "SD", "TN", "TX", "UT", "VT", "VA", "WA", "WV", "WI", "WY",
+  "DC", "PR", "GU", "VI", "AS", "MP"
 ] as const;
 
 export type USState = typeof VALID_STATES[number];
@@ -178,10 +179,20 @@ export function isValidEmail(email: string): boolean {
 }
 
 /**
- * Validate routing number (9 digits)
+ * Validate routing number using ABA checksum algorithm
+ * Format: 9 digits with checksum validation
  */
 export function isValidRoutingNumber(routingNumber: string): boolean {
-  return /^\d{9}$/.test(routingNumber);
+  if (!/^\d{9}$/.test(routingNumber)) return false;
+
+  // ABA routing number checksum: 3(d1 + d4 + d7) + 7(d2 + d5 + d8) + (d3 + d6 + d9) mod 10 = 0
+  const digits = routingNumber.split('').map(Number);
+  const checksum =
+    3 * (digits[0] + digits[3] + digits[6]) +
+    7 * (digits[1] + digits[4] + digits[7]) +
+    (digits[2] + digits[5] + digits[8]);
+
+  return checksum % 10 === 0;
 }
 
 /**

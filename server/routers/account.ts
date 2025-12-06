@@ -5,6 +5,7 @@ import { protectedProcedure, router } from "../trpc";
 import { db } from "@/lib/db";
 import { accounts, transactions } from "@/lib/db/schema";
 import { eq, and, desc } from "drizzle-orm";
+import { isValidRoutingNumber } from "@/lib/validation";
 
 function generateAccountNumber(): string {
   const bytes = crypto.randomBytes(5);
@@ -82,10 +83,10 @@ export const accountRouter = router({
           routingNumber: z.string().optional(),
         }).refine((data) => {
           if (data.type === "bank") {
-            return data.routingNumber && /^\d{9}$/.test(data.routingNumber);
+            return data.routingNumber && isValidRoutingNumber(data.routingNumber);
           }
           return true;
-        }, { message: "Routing number is required for bank transfers (9 digits)" }),
+        }, { message: "Valid routing number is required for bank transfers (9 digits with valid checksum)" }),
       })
     )
     .mutation(async ({ input, ctx }) => {

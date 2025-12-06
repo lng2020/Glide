@@ -134,8 +134,16 @@ describe('VAL-203: State Code Validation', () => {
     expect(isValidState('AB')).toBe(false);
   });
 
-  it('VALID_STATES contains 51 entries', () => {
-    expect(VALID_STATES.length).toBe(51);
+  it('VALID_STATES contains 56 entries (50 states + DC + 5 territories)', () => {
+    expect(VALID_STATES.length).toBe(56);
+  });
+
+  it('accepts US territories', () => {
+    expect(isValidState('PR')).toBe(true); // Puerto Rico
+    expect(isValidState('GU')).toBe(true); // Guam
+    expect(isValidState('VI')).toBe(true); // US Virgin Islands
+    expect(isValidState('AS')).toBe(true); // American Samoa
+    expect(isValidState('MP')).toBe(true); // Northern Mariana Islands
   });
 });
 
@@ -216,9 +224,17 @@ describe('VAL-206: Card Number Validation (Luhn)', () => {
   });
 });
 
-describe('VAL-207: Routing Number Validation', () => {
-  it('accepts 9-digit routing numbers', () => {
-    expect(isValidRoutingNumber('123456789')).toBe(true);
+describe('VAL-207: Routing Number Validation (ABA Checksum)', () => {
+  it('accepts valid routing numbers with correct checksum', () => {
+    // Real routing numbers that pass ABA checksum
+    expect(isValidRoutingNumber('021000021')).toBe(true); // JPMorgan Chase
+    expect(isValidRoutingNumber('011401533')).toBe(true); // Bank of America
+    expect(isValidRoutingNumber('091000019')).toBe(true); // Wells Fargo
+  });
+
+  it('rejects routing numbers with invalid checksum', () => {
+    expect(isValidRoutingNumber('123456789')).toBe(false); // Invalid checksum
+    expect(isValidRoutingNumber('111111111')).toBe(false); // Invalid checksum
   });
 
   it('rejects wrong lengths', () => {

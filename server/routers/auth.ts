@@ -7,6 +7,7 @@ import { db } from "@/lib/db";
 import { users, sessions } from "@/lib/db/schema";
 import { eq } from "drizzle-orm";
 import { encryptSSN, getSSNLastFour } from "@/lib/crypto";
+import { VALID_STATES } from "@/lib/validation";
 
 export const authRouter = router({
   signup: publicProcedure
@@ -36,14 +37,7 @@ export const authRouter = router({
         address: z.string().min(1),
         city: z.string().min(1),
         state: z.string().toUpperCase().refine((val) => {
-          const validStates = [
-            "AL", "AK", "AZ", "AR", "CA", "CO", "CT", "DE", "FL", "GA",
-            "HI", "ID", "IL", "IN", "IA", "KS", "KY", "LA", "ME", "MD",
-            "MA", "MI", "MN", "MS", "MO", "MT", "NE", "NV", "NH", "NJ",
-            "NM", "NY", "NC", "ND", "OH", "OK", "OR", "PA", "RI", "SC",
-            "SD", "TN", "TX", "UT", "VT", "VA", "WA", "WV", "WI", "WY", "DC"
-          ];
-          return validStates.includes(val);
+          return VALID_STATES.includes(val as typeof VALID_STATES[number]);
         }, { message: "Invalid US state code" }),
         zipCode: z.string().regex(/^\d{5}$/),
       })
