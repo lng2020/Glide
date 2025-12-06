@@ -2,7 +2,6 @@
 
 ## Table of Contents
 
-- [Checklist](#checklist)
 - [Critical Fixes](#critical)
   - [SEC-301: SSN Plaintext Storage](#sec-301-ssn-plaintext-storage-critical)
   - [SEC-303: XSS Vulnerability](#sec-303-xss-vulnerability-critical)
@@ -36,39 +35,6 @@
   - [Test Coverage by Bug Fix](#test-coverage-by-bug-fix)
   - [Architecture](#architecture)
   - [Configuration Files](#configuration-files)
-
----
-
-## Checklist(Sorted by Fix Order)
-
-### Critical
-- [x] [SEC-301: SSN Plaintext Storage](#sec-301-ssn-plaintext-storage-critical)
-- [x] [SEC-303: XSS Vulnerability](#sec-303-xss-vulnerability-critical)
-- [x] [PERF-401: Account Creation Error](#perf-401-account-creation-error-critical)
-- [x] [PERF-406: Balance Calculation](#perf-406-balance-calculation-critical)
-- [x] [PERF-408: Resource Leak](#perf-408-resource-leak-critical)
-- [x] [VAL-202: Date of Birth Validation](#val-202-date-of-birth-validation-critical)
-- [x] [VAL-206: Card Number Validation](#val-206-card-number-validation-critical)
-- [x] [VAL-208: Weak Password Requirements](#val-208-weak-password-requirements-critical)
-- [x] [PERF-405: Missing Transactions](#perf-405-missing-transactions-critical)
-
-### High
-- [x] [SEC-302: Insecure Random Numbers](#sec-302-insecure-random-numbers-high)
-- [x] [VAL-205: Zero Amount Funding](#val-205-zero-amount-funding-high)
-- [x] [VAL-207: Routing Number Optional](#val-207-routing-number-optional-high)
-- [x] [VAL-201: Email Validation Problems](#val-201-email-validation-problems-high)
-- [x] [VAL-210: Card Type Detection](#val-210-card-type-detection-high)
-- [x] [SEC-304: Session Management](#sec-304-session-management-high)
-- [x] [PERF-403: Session Expiry](#perf-403-session-expiry-high)
-- [x] [PERF-407: Performance Degradation](#perf-407-performance-degradation-high)
-
-### Medium
-- [x] [UI-101: Dark Mode Text Visibility](#ui-101-dark-mode-text-visibility-medium)
-- [x] [VAL-203: State Code Validation](#val-203-state-code-validation-medium)
-- [x] [VAL-204: Phone Number Format](#val-204-phone-number-format-medium)
-- [x] [VAL-209: Amount Input Issues](#val-209-amount-input-issues-medium)
-- [x] [PERF-402: Logout Issues](#perf-402-logout-issues-medium)
-- [x] [PERF-404: Transaction Sorting](#perf-404-transaction-sorting-medium)
 
 ---
 
